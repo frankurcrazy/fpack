@@ -39,7 +39,7 @@ class Hello(fpack.Message):
 >>> helloMsg.MsgID = 100
 >>> helloMsg.Greetings = "Helloworld!"
 >>> helloMsg
-<Hello MsgID=100 Greetings=Helloworld!>
+<Hello MsgID=100 Greetings="Helloworld!">
 >>> helloMsg.pack()
 b'd\x00\x00\x00\x0bHelloworld!'
 ```
@@ -60,7 +60,7 @@ Decode with instance method `unpack`:
 >>> decodedMsg.unpack(b'd\x00\x00\x00\x0bHelloworld!')
 16
 >>> decodedMsg
-<Hello MsgID=100 Greetings=Helloworld!>
+<Hello MsgID=100 Greetings="Helloworld!">
 ```
 
 ## License
