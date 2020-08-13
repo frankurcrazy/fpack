@@ -77,24 +77,26 @@ class Double(Primative):
     STRUCT = struct.Struct("!d")
 
 class Bytes(Field):
+    LENGTH_STRUCT = struct.Struct("!I")
+
     def pack(self):
         length = get_length(self.val)
-        return struct.pack("!I", length) + bytes(data)
+        return self.LENGTH_STRUCT.pack(length) + bytes(data)
     
     def unpack(self, data):
         length = get_length(data)
     
-        if length < 4:
+        if length < self.LENGTH_STRUCT.size:
             raise Exception(f"size too short: {length}.")
     
-        payload_length = struct.unpack("!I", data[:4])[0]
+        payload_length = struct.unpack("!I", data[:self.LENGTH_STRUCT.size])[0]
     
-        if length < 4 + payload_length:
+        if length < self.LENGTH_STRUCT.size + payload_length:
             raise Exception(f"incomplete field, size too short: {length}.")
     
-        self.val = data[4: 4+payload_length]
+        self.val = data[self.LENGTH_STRUCT.size: self.LENGTH_STRUCT.size+payload_length]
 
-        return 4 + payload_length
+        return self.LENGTH_STRUCT.size + payload_length
 
     @property
     def size(self):
@@ -103,9 +105,11 @@ class Bytes(Field):
         return get_length(self.val)
 
 class String(Field):
+    LENGTH_STRUCT = struct.Struct("!I")
+
     def pack(self):
         length = len(self.val)
-        return struct.pack("!I", length) + self.val.encode('utf-8') 
+        return self.LENGTH_STRUCT.pack(length) + self.val.encode('utf-8') 
 
     def unpack(self, data):
         if isinstance(data, memoryview):
@@ -117,20 +121,23 @@ class String(Field):
         else:
             raise ValueError(f"invalid type {type(data)}.")
     
-        payload_length = struct.unpack("!I", data[:4])[0]
+        payload_length = self.LENGTH_STRUCT.unpack(data[:self.LENGTH_STRUCT.size])[0]
     
-        if length < 4 + payload_length:
+        if length < self.LENGTH_STRUCT.size + payload_length:
             raise Exception(f"incomplete field, size too short: {length}.")
     
-        self.val = bytes(data[4: 4+payload_length]).decode('utf-8')
+        self.val = bytes(data[self.LENGTH_STRUCT.size: self.LENGTH_STRUCT.size+payload_length]).decode('utf-8')
 
-        return 4 + payload_length
+        return self.LENGTH_STRUCT.size + payload_length
 
     @property
     def size(self):
         if not self.val:
             return 0
         return get_length(self.val)
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}=\"{self.val}\""
 
 def field_factory(name, type_):
     return type(name, (type_, ), {})
