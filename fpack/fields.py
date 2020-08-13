@@ -99,8 +99,6 @@ class Bytes(Field):
 
     @property
     def size(self):
-        if not self.val:
-            return 0
         return self.LENGTH_STRUCT.size + get_length(self.val)
 
 class String(Field):
@@ -131,8 +129,6 @@ class String(Field):
 
     @property
     def size(self):
-        if not self.val:
-            return 0
         return self.LENGTH_STRUCT.size + get_length(self.val)
 
     def __repr__(self):
