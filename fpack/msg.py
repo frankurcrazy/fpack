@@ -10,7 +10,7 @@ class Message:
     def __init__(self):
         # Initialize fields
         self._fields = [field() for field in self.Fields]
-        self._field_names = [field.__name__ for filed in self.Fields]
+        self._field_names = [field.__name__ for field in self.Fields]
 
     def pack(self) -> bytes:
         payload = BytesIO()
@@ -31,6 +31,13 @@ class Message:
 
         return offset
 
+    @classmethod
+    def from_bytes(cls, data):
+        obj = cls()
+        length = obj.unpack(data)
+
+        return (obj, length)
+
     def __repr__(self):
         return f"<{self.__class__.__name__} {' '.join(str(field) for field in self._fields)}>"
 
@@ -43,6 +50,10 @@ class Message:
             return None
 
     def __setattr__(self, attr, val):
+        if attr in ['_field_names', '_fields']:
+            object.__setattr__(self, attr, val)
+            return
+
         try:
             idx = self._field_names.index(attr)
             self._fields[idx].val = val
