@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 
 import struct
-from fpack.utils import get_length
-
+from fpack.utils import get_length 
 class Field:
     def __init__(self, val=None):
         self.val = val
@@ -77,7 +76,7 @@ class Double(Primative):
     STRUCT = struct.Struct("!d")
 
 class Bytes(Field):
-    LENGTH_STRUCT = struct.Struct("!I")
+    LENGTH_STRUCT = struct.Struct("!H")
 
     def pack(self):
         length = get_length(self.val)
@@ -105,7 +104,7 @@ class Bytes(Field):
         return self.LENGTH_STRUCT.size + get_length(self.val)
 
 class String(Field):
-    LENGTH_STRUCT = struct.Struct("!I")
+    LENGTH_STRUCT = struct.Struct("!H")
 
     def pack(self):
         length = len(self.val)
