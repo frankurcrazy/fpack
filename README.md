@@ -57,7 +57,7 @@ Decode with class method `from_bytes`:
 Decode with instance method `unpack`:
 ```python
 >>> decodedMsg = Hello()
->>> decodedMsg.unpack(b'd\x00\x0bHelloworld!')
+>>> decodedMsg.unpack(b'\x00\x0bHelloworld!')
 16
 >>> decodedMsg
 <Hello MsgID=100 Greetings="Helloworld!">
