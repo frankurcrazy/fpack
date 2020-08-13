@@ -7,10 +7,14 @@ from fpack.utils import get_length
 class Message:
     Fields = []
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         # Initialize fields
         self._fields = [field() for field in self.Fields]
         self._field_names = [field.__name__ for field in self.Fields]
+
+        for k in kwargs.keys():
+            if k in self._field_names:
+                self.__setattr__(k, kwargs[k])
 
     def pack(self) -> bytes:
         payload = BytesIO()
