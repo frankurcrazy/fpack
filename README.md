@@ -18,5 +18,50 @@ git clone https://github.com/frankurcrazy/fpack
 cd fpack && python setup.py install
 ```
 
+### Guide
+The following shows an example that uses fpack to declare and pack/unpack a message.
+
+### Message declaration
+```python
+import fpack
+
+# Declare a Hello message, with MsgID (uint8)  and Greeting (string) field.
+class Hello(fpack.Message):
+    Fields = [
+        field_factory("MsgID", fpack.Uint8),
+        field_factory("Greeting", fpack.String), 
+    ]
+```
+
+### Message serialization
+```python
+>>> helloMsg = Hello()
+>>> helloMsg.MsgID = 100
+>>> helloMsg.Greetings = "Helloworld!"
+>>> helloMsg
+<Hello MsgID=100 Greetings=Helloworld!>
+>>> helloMsg.pack()
+b'd\x00\x00\x00\x0bHelloworld!'
+```
+
+### Message deserialization
+Message deserialization can be done by calling class method `from_bytes`, or by calling instance method `unpack`
+
+Decode with class method `from_bytes`:
+```python
+>>> decodedMsg, decodedLength = Hello.from_bytes(b'd\x00\x00\x00\x0bHelloworld!')   # using the byte-stream from previous example
+>>> decodedMsg
+<Hello MsgID=100 Greetings=Helloworld!>
+```
+
+Decode with instance method `unpack`:
+```python
+>>> decodedMsg = Hello()
+>>> decodedMsg.unpack(b'd\x00\x00\x00\x0bHelloworld!')
+16
+>>> decodedMsg
+<Hello MsgID=100 Greetings=Helloworld!>
+```
+
 ## License
 BSD
