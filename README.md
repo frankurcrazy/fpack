@@ -18,18 +18,18 @@ git clone https://github.com/frankurcrazy/fpack
 cd fpack && python setup.py install
 ```
 
-### Guide
+## Guide
 The following shows an example that uses fpack to declare and pack/unpack a message.
 
 ### Message declaration
 ```python
 import fpack
 
-# Declare a Hello message, with MsgID (uint8)  and Greeting (string) field.
+# Declare a Hello message, with MsgID (`Uint8`) and Greeting (`String`) field.
 class Hello(fpack.Message):
     Fields = [
-        field_factory("MsgID", fpack.Uint8),
-        field_factory("Greeting", fpack.String), 
+        fpack.field_factory("MsgID", fpack.Uint8),
+        fpack.field_factory("Greeting", fpack.String), 
     ]
 ```
 
