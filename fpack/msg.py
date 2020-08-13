@@ -60,4 +60,8 @@ class Message:
         except ValueError:
             object.__setattr__(self, attr, val)
 
+    @property
+    def size(self):
+        return sum([field.size for field in self._fields])
+
 __all__ = ["Message"]

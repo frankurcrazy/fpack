@@ -8,9 +8,11 @@ def get_length(data):
     elif isinstance(data, bytes):
         return len(data)
     elif isinstance(data, str):
-        return len(str)
+        return len(data)
     elif isinstance(data, BytesIO):
         return data.getbuffer().nbytes
+    elif data is None:
+        return 0
     else:
         raise ValueError(f"invalid type {type(data)}.")
 
