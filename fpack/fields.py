@@ -102,7 +102,7 @@ class Bytes(Field):
     def size(self):
         if not self.val:
             return 0
-        return get_length(self.val)
+        return self.LENGTH_STRUCT.size + get_length(self.val)
 
 class String(Field):
     LENGTH_STRUCT = struct.Struct("!I")
@@ -134,7 +134,7 @@ class String(Field):
     def size(self):
         if not self.val:
             return 0
-        return get_length(self.val)
+        return self.LENGTH_STRUCT.size + get_length(self.val)
 
     def __repr__(self):
         return f"{self.__class__.__name__}=\"{self.val}\""
