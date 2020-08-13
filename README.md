@@ -41,7 +41,7 @@ class Hello(fpack.Message):
 >>> helloMsg
 <Hello MsgID=100 Greetings="Helloworld!">
 >>> helloMsg.pack()
-b'd\x00\x00\x00\x0bHelloworld!'
+b'd\x00\x0bHelloworld!'
 ```
 
 ### Message deserialization
@@ -49,7 +49,7 @@ Message deserialization can be done by calling class method `from_bytes`, or by 
 
 Decode with class method `from_bytes`:
 ```python
->>> decodedMsg, decodedLength = Hello.from_bytes(b'\x00\x0bHelloworld!')   # using the byte-stream from previous example
+>>> decodedMsg, decodedLength = Hello.from_bytes(b'd\x00\x0bHelloworld!')   # using the byte-stream from previous example
 >>> decodedMsg
 <Hello MsgID=100 Greetings=Helloworld!>
 ```
@@ -57,7 +57,7 @@ Decode with class method `from_bytes`:
 Decode with instance method `unpack`:
 ```python
 >>> decodedMsg = Hello()
->>> decodedMsg.unpack(b'\x00\x0bHelloworld!')
+>>> decodedMsg.unpack(b'd\x00\x0bHelloworld!')
 16
 >>> decodedMsg
 <Hello MsgID=100 Greetings="Helloworld!">
