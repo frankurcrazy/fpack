@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import struct
+from fpack.utils import get_length
 
 class Field:
     def __init__(self, val=None):
@@ -104,7 +105,7 @@ class Bytes(Field):
 class String(Field):
     def pack(self):
         length = len(self.val)
-        return struct.pack("!I", length) + self.val.pack('utf-8') 
+        return struct.pack("!I", length) + self.val.encode('utf-8') 
 
     def unpack(self, data):
         if isinstance(data, memoryview):
@@ -121,7 +122,7 @@ class String(Field):
         if length < 4 + payload_length:
             raise Exception(f"incomplete field, size too short: {length}.")
     
-        self.val = bytes(data[4: 4+payload_length]).unpack('utf-8')
+        self.val = bytes(data[4: 4+payload_length]).decode('utf-8')
 
         return 4 + payload_length
 
