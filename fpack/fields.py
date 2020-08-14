@@ -93,18 +93,22 @@ class Bytes(Field):
 
     def pack(self):
         length = get_length(self.val)
-        return self.LENGTH_STRUCT.pack(length) + bytes(self.val)
+        lengthBytes = self.LENGTH_STRUCT.pack(length)
+        if self.val:
+            return lengthBytes + bytes(self.val)
+
+        return lengthBytes
 
     def unpack(self, data):
         length = get_length(data)
 
         if length < self.LENGTH_STRUCT.size:
-            raise Exception(f"size too short: {length}.")
+            raise ValueError(f"size too short: {length}.")
 
         payload_length = self.LENGTH_STRUCT.unpack(data[:self.LENGTH_STRUCT.size])[0]
 
         if length < self.LENGTH_STRUCT.size + payload_length:
-            raise Exception(f"incomplete field, size too short: {length}.")
+            raise ValueError(f"incomplete field, size too short: {length}.")
 
         self.val = data[self.LENGTH_STRUCT.size: self.LENGTH_STRUCT.size+payload_length]
 
@@ -122,22 +126,23 @@ class String(Field):
 
     def pack(self):
         length = get_length(self.val)
-        return self.LENGTH_STRUCT.pack(length) + self.val.encode('utf-8')
+        lengthBytes = self.LENGTH_STRUCT.pack(length)
+
+        if self.val:
+            return  lengthBytes + self.val.encode('utf-8')
+
+        return lengthBytes
 
     def unpack(self, data):
-        if isinstance(data, memoryview):
-            length = data.nbytes
+        length = get_length(data)
 
-        elif isinstance(data, bytes):
-            length = len(data)
-
-        else:
-            raise ValueError(f"invalid type {type(data)}.")
+        if length < self.LENGTH_STRUCT.size:
+            raise ValueError(f"size too short: {length}.")
 
         payload_length = self.LENGTH_STRUCT.unpack(data[:self.LENGTH_STRUCT.size])[0]
 
         if length < self.LENGTH_STRUCT.size + payload_length:
-            raise Exception(f"incomplete field, size too short: {length}.")
+            raise ValueError(f"incomplete field, size too short: {length}.")
 
         self.val = bytes(
             data[self.LENGTH_STRUCT.size: self.LENGTH_STRUCT.size+payload_length]).decode(
