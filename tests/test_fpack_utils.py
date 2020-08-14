@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-import unittest
 import io
+import unittest
 
 try:
     from fpack.utils import get_length

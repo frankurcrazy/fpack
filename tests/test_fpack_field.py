@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-import unittest
 import struct
+import unittest
 
 try:
     from fpack import *

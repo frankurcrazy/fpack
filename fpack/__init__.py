@@ -1,8 +1,8 @@
 """fpack is a simple message (de)seriealizer in pure python
 """
 
-from fpack.msg import *
 from fpack.fields import *
+from fpack.msg import *
 
 __version__ = "0.0.6"
 __author__ = "Frank Chang"

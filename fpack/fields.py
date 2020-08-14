@@ -7,6 +7,7 @@
 """
 
 import struct
+
 from fpack.utils import get_length
 
 
