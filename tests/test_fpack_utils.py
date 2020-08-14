@@ -31,5 +31,9 @@ class TestGetLength(unittest.TestCase):
     def test_get_length_none_type(self):
         self.assertEqual(get_length(None), 0)
 
+    def test_get_length_invalid_type(self):
+        with self.assertRaises(ValueError):
+            get_length(object())
+
 if __name__ == "__main__":
     unittest.main()
