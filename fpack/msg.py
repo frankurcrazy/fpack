@@ -43,11 +43,16 @@ class Message:
         return (obj, length)
 
     def __repr__(self):
-        return f"<{self.__class__.__name__} {' '.join(str(field) for field in self._fields)}>"
+        fields_str = ' '.join(f'{field.__class__.__name__}={str(field)}' for field in self._fields)
+        return f"<{self.__class__.__name__} {fields_str}>"
 
     def __getattr__(self, attr):
         try:
             idx = self._field_names.index(attr)
+
+            if isinstance(self._fields[idx], Message):
+                return self._fields[idx]
+
             return self._fields[idx].val
 
         except ValueError:

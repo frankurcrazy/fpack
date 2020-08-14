@@ -2,6 +2,7 @@
 
 import struct
 from fpack.utils import get_length 
+
 class Field:
     def __init__(self, val=None):
         self.val = val
@@ -24,10 +25,13 @@ class Field:
         raise NotImplementedError
 
     def __repr__(self):
-        return f"{self.__class__.__name__}={self.val}"
+        return f"{self.val}"
 
-class Primative(Field):
+class Primitive(Field):
     STRUCT = struct.Struct("!I")
+
+    def __init__(self, val=0):
+        self.val = val
 
     def pack(self) -> bytes:
         return self.STRUCT.pack(self.val)
@@ -45,42 +49,45 @@ class Primative(Field):
     def size(self):
         return self.STRUCT.size
 
-class Int64(Primative):
+class Int64(Primitive):
     STRUCT = struct.Struct("!l")
 
-class Uint64(Primative):
+class Uint64(Primitive):
     STRUCT = struct.Struct("!L")
 
-class Int32(Primative):
+class Int32(Primitive):
     STRUCT = struct.Struct("!i")
 
-class Uint32(Primative):
+class Uint32(Primitive):
     STRUCT = struct.Struct("!I")
 
-class Int16(Primative):
+class Int16(Primitive):
     STRUCT = struct.Struct("!h")
 
-class Uint16(Primative):
+class Uint16(Primitive):
     STRUCT = struct.Struct("!H")
 
-class Int8(Primative):
+class Int8(Primitive):
     STRUCT = struct.Struct("b")
 
-class Uint8(Primative):
+class Uint8(Primitive):
     STRUCT = struct.Struct("B")
 
-class Float(Primative):
+class Float(Primitive):
     STRUCT = struct.Struct("!f")
 
-class Double(Primative):
+class Double(Primitive):
     STRUCT = struct.Struct("!d")
 
 class Bytes(Field):
     LENGTH_STRUCT = struct.Struct("!H")
 
+    def __init__(self, val=b""):
+        self.val = val
+
     def pack(self):
         length = get_length(self.val)
-        return self.LENGTH_STRUCT.pack(length) + bytes(data)
+        return self.LENGTH_STRUCT.pack(length) + bytes(self.val)
     
     def unpack(self, data):
         length = get_length(data)
@@ -88,7 +95,7 @@ class Bytes(Field):
         if length < self.LENGTH_STRUCT.size:
             raise Exception(f"size too short: {length}.")
     
-        payload_length = struct.unpack("!I", data[:self.LENGTH_STRUCT.size])[0]
+        payload_length = self.LENGTH_STRUCT.unpack(data[:self.LENGTH_STRUCT.size])[0]
     
         if length < self.LENGTH_STRUCT.size + payload_length:
             raise Exception(f"incomplete field, size too short: {length}.")
@@ -104,8 +111,11 @@ class Bytes(Field):
 class String(Field):
     LENGTH_STRUCT = struct.Struct("!H")
 
+    def __init__(self, val=""):
+        self.val = val
+
     def pack(self):
-        length = len(self.val)
+        length = get_length(self.val)
         return self.LENGTH_STRUCT.pack(length) + self.val.encode('utf-8') 
 
     def unpack(self, data):
@@ -132,10 +142,12 @@ class String(Field):
         return self.LENGTH_STRUCT.size + get_length(self.val)
 
     def __repr__(self):
-        return f"{self.__class__.__name__}=\"{self.val}\""
+        if self.val is None:
+            return f"{self.val}"
+        return f"\"{self.val}\""
 
 def field_factory(name, type_):
-    return type(name, (type_, ), {})
+    return type(name, (type_,), {})
 
 __all__ = [
     "Field", "Uint8", "Uint16", "Uint32", "Uint64", "Int8", "Int16",
