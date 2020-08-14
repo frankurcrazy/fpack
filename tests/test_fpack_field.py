@@ -15,7 +15,7 @@ class TestPrimitiveFieldPack(unittest.TestCase):
     def test_uint8_pack(self):
         s = struct.Struct("B")
         val = 255
-        f = Uint8(val) 
+        f = Uint8(val)
         p = f.pack()
 
         self.assertEqual(len(p), s.size)
@@ -24,7 +24,7 @@ class TestPrimitiveFieldPack(unittest.TestCase):
     def test_uint16_pack(self):
         s = struct.Struct("!H")
         val = 65535
-        f = Uint16(val) 
+        f = Uint16(val)
         p = f.pack()
 
         self.assertEqual(len(p), s.size)
@@ -33,7 +33,7 @@ class TestPrimitiveFieldPack(unittest.TestCase):
     def test_uint32_pack(self):
         s = struct.Struct("!I")
         val = 12345789
-        f = Uint32(val) 
+        f = Uint32(val)
         p = f.pack()
 
         self.assertEqual(len(p), s.size)
@@ -42,7 +42,7 @@ class TestPrimitiveFieldPack(unittest.TestCase):
     def test_uint64_pack(self):
         s = struct.Struct("!L")
         val = 2555555555
-        f = Uint64(val) 
+        f = Uint64(val)
         p = f.pack()
 
         self.assertEqual(f.size, s.size)
@@ -52,7 +52,7 @@ class TestPrimitiveFieldPack(unittest.TestCase):
     def test_int8_pack(self):
         s = struct.Struct("b")
         val = -128
-        f = Int8(val) 
+        f = Int8(val)
         p = f.pack()
 
         self.assertEqual(f.size, s.size)
@@ -61,8 +61,8 @@ class TestPrimitiveFieldPack(unittest.TestCase):
 
     def test_int16_pack(self):
         s = struct.Struct("!h")
-        val = -32767 
-        f = Int16(val) 
+        val = -32767
+        f = Int16(val)
         p = f.pack()
 
         self.assertEqual(f.size, s.size)
@@ -72,7 +72,7 @@ class TestPrimitiveFieldPack(unittest.TestCase):
     def test_int32_pack(self):
         s = struct.Struct("!i")
         val = -12345789
-        f = Int32(val) 
+        f = Int32(val)
         p = f.pack()
 
         self.assertEqual(f.size, s.size)
@@ -82,7 +82,7 @@ class TestPrimitiveFieldPack(unittest.TestCase):
     def test_int64_pack(self):
         s = struct.Struct("!l")
         val = -2055555555
-        f = Int64(val) 
+        f = Int64(val)
         p = f.pack()
 
         self.assertEqual(f.size, s.size)
@@ -93,7 +93,7 @@ class TestPrimitiveFieldUnpack(unittest.TestCase):
     def test_uint8_unpack(self):
         s = struct.Struct("B")
         val = 255
-        f = Uint8() 
+        f = Uint8()
         p = f.unpack(s.pack(val))
 
         self.assertEqual(p, s.size)
@@ -102,7 +102,7 @@ class TestPrimitiveFieldUnpack(unittest.TestCase):
     def test_uint16_unpack(self):
         s = struct.Struct("!H")
         val = 65535
-        f = Uint16() 
+        f = Uint16()
         p = f.unpack(s.pack(val))
 
         self.assertEqual(p, s.size)
@@ -111,7 +111,7 @@ class TestPrimitiveFieldUnpack(unittest.TestCase):
     def test_uint32_unpack(self):
         s = struct.Struct("!I")
         val = 12345789
-        f = Uint32() 
+        f = Uint32()
         p = f.unpack(s.pack(val))
 
         self.assertEqual(p, s.size)
@@ -120,7 +120,7 @@ class TestPrimitiveFieldUnpack(unittest.TestCase):
     def test_uint64_unpack(self):
         s = struct.Struct("!L")
         val = 2555555555
-        f = Uint64() 
+        f = Uint64()
         p = f.unpack(s.pack(val))
 
         self.assertEqual(p, s.size)
@@ -129,7 +129,7 @@ class TestPrimitiveFieldUnpack(unittest.TestCase):
     def test_int8_unpack(self):
         s = struct.Struct("b")
         val = -128
-        f = Int8() 
+        f = Int8()
         p = f.unpack(s.pack(val))
 
         self.assertEqual(p, s.size)
@@ -137,8 +137,8 @@ class TestPrimitiveFieldUnpack(unittest.TestCase):
 
     def test_int16_unpack(self):
         s = struct.Struct("!h")
-        val = -32767 
-        f = Int16() 
+        val = -32767
+        f = Int16()
         p = f.unpack(s.pack(val))
 
         self.assertEqual(p, s.size)
@@ -147,7 +147,7 @@ class TestPrimitiveFieldUnpack(unittest.TestCase):
     def test_int32_unpack(self):
         s = struct.Struct("!i")
         val = -12345789
-        f = Int32() 
+        f = Int32()
         p = f.unpack(s.pack(val))
 
         self.assertEqual(p, s.size)
@@ -156,17 +156,17 @@ class TestPrimitiveFieldUnpack(unittest.TestCase):
     def test_int64_unpack(self):
         s = struct.Struct("!l")
         val = -2055555555
-        f = Int64() 
+        f = Int64()
         p = f.unpack(s.pack(val))
 
         self.assertEqual(p, s.size)
         self.assertEqual(f.val, val)
 
 class TestStringField(unittest.TestCase):
-    pass 
+    pass
 
 class TestBytesField(unittest.TestCase):
-    pass 
+    pass
 
 if __name__ == "__main__":
     unittest.main()

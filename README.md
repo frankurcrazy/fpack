@@ -31,7 +31,7 @@ import fpack
 class Hello(fpack.Message):
     Fields = [
         fpack.field_factory("MsgID", fpack.Uint8),
-        fpack.field_factory("Greeting", fpack.String), 
+        fpack.field_factory("Greeting", fpack.String),
     ]
 ```
 

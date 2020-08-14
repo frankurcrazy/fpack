@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import struct
-from fpack.utils import get_length 
+from fpack.utils import get_length
 
 class Field:
     def __init__(self, val=None):
@@ -35,7 +35,7 @@ class Primitive(Field):
 
     def pack(self) -> bytes:
         return self.STRUCT.pack(self.val)
-    
+
     def unpack(self, data):
         length = get_length(data)
         if length < self.STRUCT.size:
@@ -88,18 +88,18 @@ class Bytes(Field):
     def pack(self):
         length = get_length(self.val)
         return self.LENGTH_STRUCT.pack(length) + bytes(self.val)
-    
+
     def unpack(self, data):
         length = get_length(data)
-    
+
         if length < self.LENGTH_STRUCT.size:
             raise Exception(f"size too short: {length}.")
-    
+
         payload_length = self.LENGTH_STRUCT.unpack(data[:self.LENGTH_STRUCT.size])[0]
-    
+
         if length < self.LENGTH_STRUCT.size + payload_length:
             raise Exception(f"incomplete field, size too short: {length}.")
-    
+
         self.val = data[self.LENGTH_STRUCT.size: self.LENGTH_STRUCT.size+payload_length]
 
         return self.LENGTH_STRUCT.size + payload_length
@@ -116,23 +116,23 @@ class String(Field):
 
     def pack(self):
         length = get_length(self.val)
-        return self.LENGTH_STRUCT.pack(length) + self.val.encode('utf-8') 
+        return self.LENGTH_STRUCT.pack(length) + self.val.encode('utf-8')
 
     def unpack(self, data):
         if isinstance(data, memoryview):
             length = data.nbytes
-    
+
         elif isinstance(data, bytes):
             length = len(data)
-    
+
         else:
             raise ValueError(f"invalid type {type(data)}.")
-    
+
         payload_length = self.LENGTH_STRUCT.unpack(data[:self.LENGTH_STRUCT.size])[0]
-    
+
         if length < self.LENGTH_STRUCT.size + payload_length:
             raise Exception(f"incomplete field, size too short: {length}.")
-    
+
         self.val = bytes(data[self.LENGTH_STRUCT.size: self.LENGTH_STRUCT.size+payload_length]).decode('utf-8')
 
         return self.LENGTH_STRUCT.size + payload_length
