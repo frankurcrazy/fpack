@@ -1,5 +1,7 @@
 # fpack
 
+[![PyPI version](https://badge.fury.io/py/fpack.svg)](https://badge.fury.io/py/fpack)
+
 ***fpack*** is a simple message (de)serializer created for fun and educational purpose.
 fpack hasn't been widely deployed, and neither has it been fully tested. So use it at your own risk.
 
