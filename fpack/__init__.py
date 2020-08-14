@@ -4,7 +4,7 @@
 from fpack.msg import *
 from fpack.fields import *
 
-__version__ = "0.0.5"
+__version__ = "0.0.6"
 __author__ = "Frank Chang"
 __author_email__ = "frank@csie.io"
 __license__ = "BSD"

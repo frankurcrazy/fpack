@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="fpack",
-    version="0.0.5",
+    version="0.0.6",
     author="Frank Chang",
     author_email="frank@csie.io",
     description="fpack is a simple message (de)seriealizer in pure python",
