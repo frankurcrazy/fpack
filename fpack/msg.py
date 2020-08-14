@@ -2,6 +2,7 @@
 
 from io import BytesIO
 
+
 class Message:
     """ Message
 
@@ -46,7 +47,9 @@ class Message:
         return (obj, length)
 
     def __repr__(self):
-        fields_str = ' '.join(f'{field.__class__.__name__}={str(field)}' for field in self._fields)
+        fields_str = " ".join(
+            f"{field.__class__.__name__}={str(field)}" for field in self._fields
+        )
         return f"<{self.__class__.__name__} {fields_str}>"
 
     def __getattr__(self, attr):
@@ -62,7 +65,7 @@ class Message:
             return None
 
     def __setattr__(self, attr, val):
-        if attr in ['_field_names', '_fields']:
+        if attr in ["_field_names", "_fields"]:
             object.__setattr__(self, attr, val)
             return
 
@@ -75,5 +78,6 @@ class Message:
     @property
     def size(self):
         return sum([field.size for field in self._fields])
+
 
 __all__ = ["Message"]

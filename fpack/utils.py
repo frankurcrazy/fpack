@@ -5,6 +5,7 @@
 
 from io import BytesIO
 
+
 def get_length(data):
     """ Get length of data
 
@@ -20,11 +21,12 @@ def get_length(data):
         return len(data)
     if isinstance(data, BytesIO):
         return data.getbuffer().nbytes
-    if hasattr(data, '__iter__'):
+    if hasattr(data, "__iter__"):
         return len(data)
     if data is None:
         return 0
 
     raise ValueError(f"invalid type {type(data)}.")
+
 
 __all__ = ["get_length"]

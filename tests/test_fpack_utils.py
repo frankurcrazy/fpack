@@ -7,9 +7,10 @@ try:
     from fpack.utils import get_length
 except ImportError:
     import os, sys
-    sys.path.append(
-        os.path.abspath(os.path.join('.', '..')))
+
+    sys.path.append(os.path.abspath(os.path.join(".", "..")))
     from fpack.utils import get_length
+
 
 class TestGetLength(unittest.TestCase):
     def test_get_length_memoryview(self):
@@ -42,7 +43,8 @@ class TestGetLength(unittest.TestCase):
         self.assertEqual(get_length((1, 2, 3)), 3)
 
     def test_get_length_dict(self):
-        self.assertEqual(get_length({'hello': 'world'}), 1)
+        self.assertEqual(get_length({"hello": "world"}), 1)
+
 
 if __name__ == "__main__":
     unittest.main()

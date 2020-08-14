@@ -7,12 +7,12 @@ try:
     from fpack import *
 except ImportError:
     import os, sys
-    sys.path.append(
-        os.path.abspath(os.path.join('.', '..')))
+
+    sys.path.append(os.path.abspath(os.path.join(".", "..")))
     from fpack import *
 
-class TestField(unittest.TestCase):
 
+class TestField(unittest.TestCase):
     def test_not_implemented_methods(self):
         field = Field()
 
@@ -20,17 +20,18 @@ class TestField(unittest.TestCase):
             field.pack()
 
         with self.assertRaises(NotImplementedError):
-            field.unpack(b'12345')
+            field.unpack(b"12345")
 
         with self.assertRaises(NotImplementedError):
             field.size
 
         with self.assertRaises(NotImplementedError):
-            field = Field.from_bytes(b'12345')
+            field = Field.from_bytes(b"12345")
 
     def test_str_representation(self):
         self.assertEqual(str(Field()), "None")
         self.assertEqual(str(Field(1234)), "1234")
+
 
 class TestPrimitiveFieldPack(unittest.TestCase):
     def test_uint8_pack(self):
@@ -109,6 +110,7 @@ class TestPrimitiveFieldPack(unittest.TestCase):
         self.assertEqual(f.size, s.size)
         self.assertEqual(len(p), s.size)
         self.assertEqual(p, s.pack(val))
+
 
 class TestPrimitiveFieldUnpack(unittest.TestCase):
     def test_uint8_unpack(self):
@@ -287,12 +289,13 @@ class TestPrimitiveFieldUnpack(unittest.TestCase):
         with self.assertRaises(ValueError):
             p = f.unpack(s.pack(val)[:5])
 
+
 class TestStringField(unittest.TestCase):
     def test_pack_string(self):
         val = "helloworld!"
         field = String(val)
-        packed= field.pack()
-        test_packed = struct.pack("!H", len(val)) + val.encode('utf-8')
+        packed = field.pack()
+        test_packed = struct.pack("!H", len(val)) + val.encode("utf-8")
 
         self.assertEqual(packed, test_packed)
         self.assertEqual(field.size, len(test_packed))
@@ -300,8 +303,8 @@ class TestStringField(unittest.TestCase):
     def test_pack_string_empty(self):
         val = ""
         field = String(val)
-        packed= field.pack()
-        test_packed = struct.pack("!H", len(val)) + val.encode('utf-8')
+        packed = field.pack()
+        test_packed = struct.pack("!H", len(val)) + val.encode("utf-8")
 
         self.assertEqual(packed, test_packed)
         self.assertEqual(field.size, len(test_packed))
@@ -312,20 +315,20 @@ class TestStringField(unittest.TestCase):
         packed = field.pack()
 
         self.assertEqual(str(field), "None")
-        self.assertEqual(packed, b"\x00"*2)
+        self.assertEqual(packed, b"\x00" * 2)
 
     def test_unpack_string(self):
         val = "helloworld!"
-        test_packed = struct.pack("!H", len(val)) + val.encode('utf-8')
+        test_packed = struct.pack("!H", len(val)) + val.encode("utf-8")
 
         unpacked, length = String.from_bytes(test_packed)
         self.assertEqual(unpacked.val, val)
         self.assertEqual(unpacked.size, len(test_packed))
-        self.assertEqual(str(unpacked), f"\"{val}\"")
+        self.assertEqual(str(unpacked), f'"{val}"')
 
     def test_unpack_string_undersized(self):
         val = "helloworld!"
-        test_packed = struct.pack("!H", len(val)) + val.encode('utf-8')
+        test_packed = struct.pack("!H", len(val)) + val.encode("utf-8")
 
         with self.assertRaises(ValueError):
             unpacked, length = String.from_bytes(test_packed[:-1])
@@ -335,12 +338,13 @@ class TestStringField(unittest.TestCase):
 
     def test_unpack_string_oversized(self):
         val = "helloworld!"
-        test_packed = struct.pack("!H", len(val)) + val.encode('utf-8')
-        sth = b'testdata123'
+        test_packed = struct.pack("!H", len(val)) + val.encode("utf-8")
+        sth = b"testdata123"
 
         unpacked, length = String.from_bytes(test_packed + sth)
         self.assertEqual(unpacked.val, val)
         self.assertEqual(unpacked.size, len(test_packed))
+
 
 class TestBytesField(unittest.TestCase):
     def test_pack_bytes(self):
@@ -367,7 +371,7 @@ class TestBytesField(unittest.TestCase):
         packed = field.pack()
 
         self.assertEqual(str(field), "None")
-        self.assertEqual(packed, b"\x00"*2)
+        self.assertEqual(packed, b"\x00" * 2)
 
     def test_unpack_bytes(self):
         val = b"helloworld!"
@@ -391,11 +395,12 @@ class TestBytesField(unittest.TestCase):
     def test_unpack_bytes_oversized(self):
         val = b"helloworld!"
         test_packed = struct.pack("!H", len(val)) + val
-        sth = b'testdata123'
+        sth = b"testdata123"
 
         unpacked, length = Bytes.from_bytes(test_packed + sth)
         self.assertEqual(unpacked.val, val)
         self.assertEqual(unpacked.size, len(test_packed))
+
 
 class TestFieldFactory(unittest.TestCase):
     def test_field_factory(self):
@@ -403,6 +408,7 @@ class TestFieldFactory(unittest.TestCase):
 
         self.assertEqual(fieldClass.__name__, "Test")
         self.assertTrue(issubclass(fieldClass, Uint8))
+
 
 if __name__ == "__main__":
     unittest.main()
