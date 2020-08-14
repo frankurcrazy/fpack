@@ -50,10 +50,10 @@ class Primitive(Field):
         return self.STRUCT.size
 
 class Int64(Primitive):
-    STRUCT = struct.Struct("!l")
+    STRUCT = struct.Struct("!q")
 
 class Uint64(Primitive):
-    STRUCT = struct.Struct("!L")
+    STRUCT = struct.Struct("!Q")
 
 class Int32(Primitive):
     STRUCT = struct.Struct("!i")
