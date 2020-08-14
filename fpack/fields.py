@@ -1,5 +1,11 @@
 #!/usr/bin/env python
 
+""" fpack basic field types
+
+    fpack includes field support for primitive types, string
+    and bytes
+"""
+
 import struct
 from fpack.utils import get_length
 
@@ -31,7 +37,7 @@ class Primitive(Field):
     STRUCT = struct.Struct("!I")
 
     def __init__(self, val=0):
-        self.val = val
+        super().__init__(val)
 
     def pack(self) -> bytes:
         return self.STRUCT.pack(self.val)
@@ -83,7 +89,7 @@ class Bytes(Field):
     LENGTH_STRUCT = struct.Struct("!H")
 
     def __init__(self, val=b""):
-        self.val = val
+        super().__init__(val)
 
     def pack(self):
         length = get_length(self.val)
@@ -112,7 +118,7 @@ class String(Field):
     LENGTH_STRUCT = struct.Struct("!H")
 
     def __init__(self, val=""):
-        self.val = val
+        super().__init__(val)
 
     def pack(self):
         length = get_length(self.val)
@@ -133,7 +139,9 @@ class String(Field):
         if length < self.LENGTH_STRUCT.size + payload_length:
             raise Exception(f"incomplete field, size too short: {length}.")
 
-        self.val = bytes(data[self.LENGTH_STRUCT.size: self.LENGTH_STRUCT.size+payload_length]).decode('utf-8')
+        self.val = bytes(
+            data[self.LENGTH_STRUCT.size: self.LENGTH_STRUCT.size+payload_length]).decode(
+                'utf-8')
 
         return self.LENGTH_STRUCT.size + payload_length
 
@@ -147,6 +155,19 @@ class String(Field):
         return f"\"{self.val}\""
 
 def field_factory(name, type_):
+    """ field type factory
+
+        This function generate custom field classes for
+        designated types.
+
+        Arguments:
+            name (str): name of the class
+            type (class): class from which the custom field class
+                          inherit
+
+        Return:
+            field class
+    """
     return type(name, (type_,), {})
 
 __all__ = [

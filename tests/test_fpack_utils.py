@@ -35,5 +35,14 @@ class TestGetLength(unittest.TestCase):
         with self.assertRaises(ValueError):
             get_length(object())
 
+    def test_get_length_list(self):
+        self.assertEqual(get_length([]), 0)
+
+    def test_get_length_tuple(self):
+        self.assertEqual(get_length((1, 2, 3)), 3)
+
+    def test_get_length_dict(self):
+        self.assertEqual(get_length({'hello': 'world'}), 1)
+
 if __name__ == "__main__":
     unittest.main()

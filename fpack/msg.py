@@ -1,18 +1,22 @@
 #!/usr/bin/env python
 
-import struct
 from io import BytesIO
-from fpack.utils import get_length
 
 class Message:
+    """ Message
+
+        Message is the base class of all custom messages. It implements general methods
+        for all messages.
+    """
+
     Fields = []
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *_, **kwargs):
         # Initialize fields
         self._fields = [field() for field in self.Fields]
         self._field_names = [field.__name__ for field in self.Fields]
 
-        for k in kwargs.keys():
+        for k in kwargs:
             if k in self._field_names:
                 self.__setattr__(k, kwargs[k])
 
@@ -29,8 +33,8 @@ class Message:
 
         offset = 0
         for field in self.Fields:
-            f, processed = field.from_bytes(data[offset:])
-            self._fields.append(f)
+            decoded_field, processed = field.from_bytes(data[offset:])
+            self._fields.append(decoded_field)
             offset += processed
 
         return offset
@@ -39,7 +43,6 @@ class Message:
     def from_bytes(cls, data):
         obj = cls()
         length = obj.unpack(data)
-
         return (obj, length)
 
     def __repr__(self):

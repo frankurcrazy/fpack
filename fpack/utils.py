@@ -1,20 +1,30 @@
 #!/usr/bin/env python
 
+""" utility functions used by fpack
+"""
+
 from io import BytesIO
 
 def get_length(data):
+    """ Get length of data
+
+        Arguments:
+            data: data to measure length
+    """
+
     if isinstance(data, memoryview):
         return data.nbytes
-    elif isinstance(data, bytes):
+    if isinstance(data, bytes):
         return len(data)
-    elif isinstance(data, str):
+    if isinstance(data, str):
         return len(data)
-    elif isinstance(data, BytesIO):
+    if isinstance(data, BytesIO):
         return data.getbuffer().nbytes
-    elif data is None:
+    if hasattr(data, '__iter__'):
+        return len(data)
+    if data is None:
         return 0
-    else:
-        raise ValueError(f"invalid type {type(data)}.")
 
+    raise ValueError(f"invalid type {type(data)}.")
 
 __all__ = ["get_length"]
