@@ -18,6 +18,6 @@ deploy:
   skip_existing: true
   on:
     tags: true
-  username: __token__
+  username: "__token__"
   password:
     secure: coxVNf0pqOUWbUgYdyIzpcnL9j07OS2a2YB0cAtyXW/jDtNj0pkVnidhkuCGmQDqnFIXvwz/4N6QfC78a17yLZrCFXljPxfhGigp05q31t4kz6TriU+KFpHMaZ/WmnS8dwroJIx2fang9g0I5QHwRpIubzXQI2i27vAyaTU9CPkqgf1txn+E9w/cgl9M18mU1F+xBY3/Y23AMZEU5+VJ1mX1HFl1tEwjB3TGt8RMep5Np5p9B6zmNoW7z0YYrrc4r0rz2Tt8z4UnxCZ4iXMHwYxnor0f/idwaVDaJNHsNqSPoWkm8H+R2ydw5KJMIuYKuUN0+UJMYG+s+aS1b1NF8Mo6r+A1CWhNkHKSFsrtA3gEhLZk4RPSBMSBqlwp9HXHnO0qHvP4bg+5n6ELBWCibZqbFdYUHRCVAuzIMKNMfjGTemjLxo6EWKh2AN4WqCTW1uLDvlAYKghztC/sE6DGSu395mXPT+dhjL7X2Fi8yIU0CPKBFWRBkXG7YFm4Ny72GqlPKkrOTUGXvphLqLBZ54T9/Pl1JX/I0KFWy4s2rp85yTjCWkhOwnNsvQAZNlTrGGantZ9V7rg7iunpHR/9Thm/bzQQdcXCsJf2nXAqlSk5eYlI4kEqahlqkyXKnxSajAScQM0J7HGzN4Er37+qE/0p4v+Py1y8q8z8fL+9Wg8=
