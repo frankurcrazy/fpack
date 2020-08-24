@@ -249,9 +249,7 @@ def array_field_factory(name, type_):
         return (self, offset)
 
     return type(
-        name,
-        (Array, type_,),
-        {"pack": pack, "unpack": unpack, "__len__": len_, "size": size},
+        name, (Array,), {"pack": pack, "unpack": unpack, "__len__": len_, "size": size},
     )
 
 
