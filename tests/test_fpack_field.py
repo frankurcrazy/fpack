@@ -6,7 +6,8 @@ import unittest
 try:
     from fpack import *
 except ImportError:
-    import os, sys
+    import os
+    import sys
 
     sys.path.append(os.path.abspath(os.path.join(".", "..")))
     from fpack import *
@@ -402,12 +403,85 @@ class TestBytesField(unittest.TestCase):
         self.assertEqual(unpacked.size, len(test_packed))
 
 
+class TestArrayField(unittest.TestCase):
+    def test_pack_string_array(self):
+        array_of_string = [
+            String("this"),
+            String("is"),
+            String("an"),
+            String("array"),
+            String("of"),
+            String("strings."),
+        ]
+
+        StringArray = array_field_factory("StringArray", String)
+        array = StringArray(array_of_string)
+        item_strings = f"[{','.join(str(x) for x in array_of_string)}]"
+        packed = b"\x00\x00\x00\x25" + b"\x00\x06"
+
+        for s in array_of_string:
+            packed += s.pack()
+
+        self.assertEqual(len(array), len(array_of_string))
+        self.assertEqual(array.size, 41)
+        self.assertEqual(
+            str(array),
+            f"<StringArray length={len(array_of_string)} items={item_strings}>",
+        )
+        self.assertEqual(array.pack(), packed)
+
+    def test_pack_string_array_incompatible_size(self):
+        array_of_string = [
+            String("this"),
+            String("is"),
+            String("an"),
+            String("array"),
+            String("of"),
+            Bytes(b"strings."),
+        ]
+
+        StringArray = array_field_factory("StringArray", String)
+        with self.assertRaises(TypeError):
+            array = StringArray(array_of_string)
+            array.pack()
+
+    def test_unpack_string_array(self):
+        StringArray = array_field_factory("StringArray", String)
+
+        raw = b"\x00\x00\x00%\x00\x06\x00\x04this\x00\x02is\x00\x02an\x00\x05array\x00\x02of\x00\x08strings."
+        unpacked, s = StringArray.from_bytes(raw)
+
+        self.assertTrue(unpacked.size, len(raw))
+        self.assertTrue(s, len(raw))
+        self.assertTrue(len(unpacked), 6)
+
+    def test_unpack_string_array_undersized(self):
+        StringArray = array_field_factory("StringArray", String)
+
+        raw = b"\x00\x00\x00%\x00\x06\x00\x04this\x00\x02is\x00\x02an\x00\x05array\x00\x02of\x00\x08strings."
+        with self.assertRaises(ValueError):
+            unpacked, s = StringArray.from_bytes(raw[:3])
+
+    def test_unpack_string_array_incomplete(self):
+        StringArray = array_field_factory("StringArray", String)
+
+        raw = b"\x00\x00\x00%\x00\x06\x00\x04this\x00\x02is\x00\x02an\x00\x05array\x00\x02of\x00\x08strings."
+        with self.assertRaises(ValueError):
+            unpacked, s = StringArray.from_bytes(raw[:-1])
+
+
 class TestFieldFactory(unittest.TestCase):
     def test_field_factory(self):
         fieldClass = field_factory("Test", Uint8)
 
         self.assertEqual(fieldClass.__name__, "Test")
         self.assertTrue(issubclass(fieldClass, Uint8))
+
+    def test_array_field_factory(self):
+        fieldClass = array_field_factory("TestArray", Uint8)
+
+        self.assertEqual(fieldClass.__name__, "TestArray")
+        self.assertTrue(issubclass(fieldClass, Array))
 
 
 if __name__ == "__main__":

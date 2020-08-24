@@ -20,6 +20,8 @@ __all__ = [
     "Int64",
     "Bytes",
     "String",
+    "Array",
     "field_factory",
+    "array_field_factory",
     "Message",
 ]

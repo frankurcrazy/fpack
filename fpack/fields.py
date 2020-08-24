@@ -7,6 +7,7 @@
 """
 
 import struct
+from io import BytesIO
 
 from fpack.utils import get_length
 
@@ -177,6 +178,83 @@ class String(Field):
         return f'"{self.val}"'
 
 
+class Array(Field):
+    def __init__(self, val=[]):
+        super().__init__(val=val)
+
+    def __repr__(self):
+        item_str = ",".join(str(x) for x in self.val)
+        item_str = f"[{item_str}]"
+
+        return f"<{self.__class__.__name__} length={get_length(self.val)} items={item_str}>"
+
+
+def array_field_factory(name, type_):
+    total_length_struct = struct.Struct("!I")
+    array_length_struct = struct.Struct("!H")
+
+    @property
+    def size(self):
+        total_size = total_length_struct.size + array_length_struct.size
+        for v in self.val:
+            total_size += v.size
+
+        return total_size
+
+    def len_(self):
+        return get_length(self.val)
+
+    def pack(self):
+        buf = BytesIO()
+        buf.seek(total_length_struct.size)
+        buf.write(array_length_struct.pack(get_length(self.val)))
+
+        payload_size = array_length_struct.size
+        for v in self.val:
+            if not isinstance(v, type_):
+                raise TypeError(f"Incompatible type {v.__class__.__name__}.")
+            buf.write(v.pack())
+            payload_size += v.size
+
+        buf.seek(0)
+        buf.write(total_length_struct.pack(payload_size))
+
+        return buf.getbuffer()
+
+    def unpack(self, data):
+        self.val = []
+        offset = 0
+
+        if get_length(data) < total_length_struct.size:
+            raise ValueError(f"size too short: {total_length_struct.size}.")
+
+        total_length, *_ = total_length_struct.unpack(
+            data[offset : offset + total_length_struct.size]
+        )
+        offset += total_length_struct.size
+
+        if get_length(data[offset:]) < total_length:
+            raise ValueError(f"incomplete field, size too small: {total_length}.")
+
+        array_length, *_ = array_length_struct.unpack(
+            data[offset : offset + array_length_struct.size]
+        )
+        offset += array_length_struct.size
+
+        for _ in range(array_length):
+            unpacked, len_ = type_.from_bytes(data[offset:])
+            self.val.append(unpacked)
+            offset += len_
+
+        return (self, offset)
+
+    return type(
+        name,
+        (Array, type_,),
+        {"pack": pack, "unpack": unpack, "__len__": len_, "size": size},
+    )
+
+
 def field_factory(name, type_):
     """ field type factory
 
@@ -206,5 +284,7 @@ __all__ = [
     "Int64",
     "Bytes",
     "String",
+    "Array",
     "field_factory",
+    "array_field_factory",
 ]
