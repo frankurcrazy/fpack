@@ -47,11 +47,12 @@ class Primitive(Field):
         return self.STRUCT.pack(self.val)
 
     def unpack(self, data):
-        length = get_length(data)
-        if length < self.STRUCT.size:
-            raise ValueError(f"size too small: {length}")
-
-        self.val = self.STRUCT.unpack(data[: self.STRUCT.size])[0]
+        try:
+            self.val = self.STRUCT.unpack(data[: self.STRUCT.size])[0]
+        except struct.error:
+            raise ValueError(
+                f"size too small: {get_length(data)}, expect {self.STRUCT.size}."
+            )
 
         return self.STRUCT.size
 
@@ -115,19 +116,23 @@ class Bytes(Field):
         return lengthBytes
 
     def unpack(self, data):
+        data = memoryview(data)
+
         length = get_length(data)
 
-        if length < self.LENGTH_STRUCT.size:
-            raise ValueError(f"size too short: {length}.")
-
-        payload_length = self.LENGTH_STRUCT.unpack(data[: self.LENGTH_STRUCT.size])[0]
+        try:
+            payload_length = self.LENGTH_STRUCT.unpack(data[: self.LENGTH_STRUCT.size])[
+                0
+            ]
+        except struct.error:
+            raise ValueError(f"size too short: {get_length(data)}.")
 
         if length < self.LENGTH_STRUCT.size + payload_length:
             raise ValueError(f"incomplete field, size too short: {length}.")
 
         self.val = data[
             self.LENGTH_STRUCT.size : self.LENGTH_STRUCT.size + payload_length
-        ]
+        ].tobytes()
 
         return self.LENGTH_STRUCT.size + payload_length
 
@@ -190,12 +195,11 @@ class Array(Field):
 
 
 def array_field_factory(name, type_):
-    total_length_struct = struct.Struct("!I")
     array_length_struct = struct.Struct("!H")
 
     @property
     def size(self):
-        total_size = total_length_struct.size + array_length_struct.size
+        total_size = array_length_struct.size
         for v in self.val:
             total_size += v.size
 
@@ -206,7 +210,6 @@ def array_field_factory(name, type_):
 
     def pack(self):
         buf = BytesIO()
-        buf.seek(total_length_struct.size)
         buf.write(array_length_struct.pack(get_length(self.val)))
 
         payload_size = array_length_struct.size
@@ -216,30 +219,21 @@ def array_field_factory(name, type_):
             buf.write(v.pack())
             payload_size += v.size
 
-        buf.seek(0)
-        buf.write(total_length_struct.pack(payload_size))
-
-        return buf.getbuffer()
+        return buf.getvalue()
 
     def unpack(self, data):
+        data = memoryview(data)
+
         self.val = []
         offset = 0
 
-        if get_length(data) < total_length_struct.size:
-            raise ValueError(f"size too short: {total_length_struct.size}.")
-
-        total_length, *_ = total_length_struct.unpack(
-            data[offset : offset + total_length_struct.size]
-        )
-        offset += total_length_struct.size
-
-        if get_length(data[offset:]) < total_length:
-            raise ValueError(f"incomplete field, size too small: {total_length}.")
-
-        array_length, *_ = array_length_struct.unpack(
-            data[offset : offset + array_length_struct.size]
-        )
-        offset += array_length_struct.size
+        try:
+            array_length, *_ = array_length_struct.unpack(
+                data[0 : array_length_struct.size]
+            )
+            offset += array_length_struct.size
+        except struct.error:
+            raise ValueError(f"incomplete field, size too small: {get_length(data)}.")
 
         for _ in range(array_length):
             unpacked, len_ = type_.from_bytes(data[offset:])

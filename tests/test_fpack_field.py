@@ -417,13 +417,13 @@ class TestArrayField(unittest.TestCase):
         StringArray = array_field_factory("StringArray", String)
         array = StringArray(array_of_string)
         item_strings = f"[{','.join(str(x) for x in array_of_string)}]"
-        packed = b"\x00\x00\x00\x25" + b"\x00\x06"
+        packed = b"\x00\x06"
 
         for s in array_of_string:
             packed += s.pack()
 
         self.assertEqual(len(array), len(array_of_string))
-        self.assertEqual(array.size, 41)
+        self.assertEqual(array.size, 37)
         self.assertEqual(
             str(array),
             f"<StringArray length={len(array_of_string)} items={item_strings}>",
@@ -448,7 +448,7 @@ class TestArrayField(unittest.TestCase):
     def test_unpack_string_array(self):
         StringArray = array_field_factory("StringArray", String)
 
-        raw = b"\x00\x00\x00%\x00\x06\x00\x04this\x00\x02is\x00\x02an\x00\x05array\x00\x02of\x00\x08strings."
+        raw = b"\x00\x06\x00\x04this\x00\x02is\x00\x02an\x00\x05array\x00\x02of\x00\x08strings."
         unpacked, s = StringArray.from_bytes(raw)
 
         self.assertTrue(unpacked.size, len(raw))
@@ -458,14 +458,14 @@ class TestArrayField(unittest.TestCase):
     def test_unpack_string_array_undersized(self):
         StringArray = array_field_factory("StringArray", String)
 
-        raw = b"\x00\x00\x00%\x00\x06\x00\x04this\x00\x02is\x00\x02an\x00\x05array\x00\x02of\x00\x08strings."
+        raw = b"\x00\x06\x00\x04this\x00\x02is\x00\x02an\x00\x05array\x00\x02of\x00\x08strings."
         with self.assertRaises(ValueError):
-            unpacked, s = StringArray.from_bytes(raw[:3])
+            unpacked, s = StringArray.from_bytes(raw[:0])
 
     def test_unpack_string_array_incomplete(self):
         StringArray = array_field_factory("StringArray", String)
 
-        raw = b"\x00\x00\x00%\x00\x06\x00\x04this\x00\x02is\x00\x02an\x00\x05array\x00\x02of\x00\x08strings."
+        raw = b"\x00\x06\x00\x04this\x00\x02is\x00\x02an\x00\x05array\x00\x02of\x00\x08strings."
         with self.assertRaises(ValueError):
             unpacked, s = StringArray.from_bytes(raw[:-1])
 

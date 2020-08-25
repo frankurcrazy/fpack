@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 from collections import OrderedDict
-from functools import cached_property
 from io import BytesIO
 
 
@@ -20,7 +19,11 @@ class Message:
 
         for field in self.Fields:
             arg = kwargs.get(field.__name__, None)
-            obj = field(arg) if arg is not None and not issubclass(field, Message) else field()
+            obj = (
+                field(arg)
+                if arg is not None and not issubclass(field, Message)
+                else field()
+            )
             self._fields[field.__name__] = obj
 
     def pack(self) -> bytes:
@@ -32,6 +35,8 @@ class Message:
         return payload.getvalue()
 
     def unpack(self, data):
+        data = memoryview(data)
+
         offset = 0
         for v in self._fields.values():
             processed = v.unpack(data[offset:])
@@ -68,7 +73,6 @@ class Message:
 
         self._fields[attr].val = val
 
-    @cached_property
     def size(self):
         return sum([field.size for field in self._fields.values()])
 
