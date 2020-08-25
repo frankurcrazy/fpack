@@ -73,6 +73,7 @@ class Message:
 
         self._fields[attr].val = val
 
+    @property
     def size(self):
         return sum([field.size for field in self._fields.values()])
 
