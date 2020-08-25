@@ -452,7 +452,7 @@ class TestArrayField(unittest.TestCase):
         unpacked, s = StringArray.from_bytes(raw)
 
         self.assertTrue(unpacked.size, len(raw))
-        self.assertTrue(s, len(raw))
+        self.assertEqual(s, len(raw))
         self.assertTrue(len(unpacked), 6)
 
     def test_unpack_string_array_undersized(self):

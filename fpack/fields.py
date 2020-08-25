@@ -240,7 +240,7 @@ def array_field_factory(name, type_):
             self.val.append(unpacked)
             offset += len_
 
-        return (self, offset)
+        return offset
 
     return type(
         name,
