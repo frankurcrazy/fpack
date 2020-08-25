@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-from io import BytesIO
 from collections import OrderedDict
+from io import BytesIO
 
 
 class Message:
@@ -17,14 +17,17 @@ class Message:
         # Initialize fields
         self._fields = OrderedDict()
         for field in self.Fields:
-            self._fields[field.__name__] = field()
-        for key in kwargs:
-            self.__setattr__(key, kwargs[key])
+            if field.__name__ in kwargs:
+                obj = field(kwargs[field.__name__])
+            else:
+                obj = field()
+
+            self._fields[field.__name__] = obj
 
     def pack(self) -> bytes:
         payload = BytesIO()
 
-        for k, v in self._fields.items():
+        for _, v in self._fields.items():
             payload.write(v.pack())
 
         return payload.getvalue()
@@ -44,9 +47,7 @@ class Message:
         return (obj, length)
 
     def __repr__(self):
-        fields_str = " ".join(
-            f"{k}={str(v)}" for k, v in self._fields
-        )
+        fields_str = " ".join(f"{k}={str(v)}" for k, v in self._fields)
         return f"<{self.__class__.__name__} {fields_str}>"
 
     def __getattr__(self, attr):
