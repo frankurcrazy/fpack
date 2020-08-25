@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from collections import OrderedDict
+from functools import cached_property
 from io import BytesIO
 
 
@@ -16,25 +17,23 @@ class Message:
     def __init__(self, *_, **kwargs):
         # Initialize fields
         self._fields = OrderedDict()
-        for field in self.Fields:
-            if field.__name__ in kwargs:
-                obj = field(kwargs[field.__name__])
-            else:
-                obj = field()
 
+        for field in self.Fields:
+            arg = kwargs.get(field.__name__, None)
+            obj = field(arg) if arg is not None and not issubclass(field, Message) else field()
             self._fields[field.__name__] = obj
 
     def pack(self) -> bytes:
         payload = BytesIO()
 
-        for _, v in self._fields.items():
+        for v in self._fields.values():
             payload.write(v.pack())
 
         return payload.getvalue()
 
     def unpack(self, data):
         offset = 0
-        for k, v in self._fields.items():
+        for v in self._fields.values():
             processed = v.unpack(data[offset:])
             offset += processed
 
@@ -47,7 +46,7 @@ class Message:
         return (obj, length)
 
     def __repr__(self):
-        fields_str = " ".join(f"{k}={str(v)}" for k, v in self._fields)
+        fields_str = " ".join(f"{k}={str(v)}" for k, v in self._fields.items())
         return f"<{self.__class__.__name__} {fields_str}>"
 
     def __getattr__(self, attr):
@@ -67,14 +66,11 @@ class Message:
             object.__setattr__(self, attr, val)
             return
 
-        if attr in self._fields:
-            self._fields[attr].val = val
-        else:
-            object.__setattr__(self, attr, val)
+        self._fields[attr].val = val
 
-    @property
+    @cached_property
     def size(self):
-        return sum([field.size for field in self._fields])
+        return sum([field.size for field in self._fields.values()])
 
 
 __all__ = ["Message"]

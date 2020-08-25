@@ -249,7 +249,15 @@ def array_field_factory(name, type_):
         return (self, offset)
 
     return type(
-        name, (Array,), {"pack": pack, "unpack": unpack, "__len__": len_, "size": size},
+        name,
+        (Array,),
+        {
+            "pack": pack,
+            "unpack": unpack,
+            "__len__": len_,
+            "size": size,
+            "__slots__": ("val",),
+        },
     )
 
 
@@ -267,7 +275,7 @@ def field_factory(name, type_):
         Return:
             field class
     """
-    return type(name, (type_,), {})
+    return type(name, (type_,), {"__slots__": ("val",)})
 
 
 __all__ = [
