@@ -30,12 +30,9 @@ class Message:
         return payload.getvalue()
 
     def unpack(self, data):
-        self._fields = {}
-
         offset = 0
-        for field in self.Fields:
-            decoded_field, processed = field.from_bytes(data[offset:])
-            self._fields[field.__name__] = decoded_field
+        for k, v in self._fields.items():
+            processed = v.unpack(data[offset:])
             offset += processed
 
         return offset
