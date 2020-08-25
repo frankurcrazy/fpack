@@ -80,7 +80,7 @@ Decode with instance method `unpack`:
 <Hello MsgID=100 Greetings="Helloworld!">
 ```
 
-### Nested message (v0.0.5 and beyond)
+### Nested message (from 0.0.5 and beyond)
 Nested message is supported.
 
 Declaring an nested message:
@@ -118,6 +118,36 @@ class Mail(fpack.Message):
 <Mail Header=<Header Subject="this is a mail" From="John Doe" To="Jane Doe"> Body=<Body Text="mail body" Signature="by John doe">>
 >>> mail.pack()
 b'\x00\x0ethis is a mail\x00\x08John Doe\x00\x08Jane Doe\x00\tmail body\x00\x0bby John doe'
+```
+
+### Array (from 1.0.0 and beyond)
+Array field is supported and can be created via ```array_field_factory(name, type)```.
+
+```python
+import fpack
+
+class Item(fpack.Message):
+    Fields = [
+        fpack.field_factory("Name", fpack.String),
+        fpack.field_factory("Price", fpack.Uint32),
+    ]
+
+class Catalog(fpack.Message):
+    Fields = [
+        fpack.field_factory("CatalogID", fpack.Uint8),
+        fpack.array_field_factory("Items", Item),
+    ]
+
+items = [
+    Item(Name="Camera", Price=10),
+    Item(Name="Computer", Price=12),
+    Item(Name="Dildo", Price=5),
+]
+
+>>> catalog = Catalog(CatalogID=1, Items=items)
+<Catalog CatalogID=1 Items=<Items length=3 items=[<Item Name="Camera" Price=10>,<Item Name="Computer" Price=12>,<Item Name="Dildo" Price=5>]>>
+>>> catalog.pack()
+b'\x01\x00\x03\x00\x06Camera\x00\x00\x00\n\x00\x08Computer\x00\x00\x00\x0c\x00\x05Dildo\x00\x00\x00\x05'
 ```
 
 ## License
