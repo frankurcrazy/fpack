@@ -1,8 +1,8 @@
 # fpack
 
-[![PyPI version](https://badge.fury.io/py/fpack.svg?kill_cache=1)](https://badge.fury.io/py/fpack)
-[![Build Status](https://travis-ci.com/frankurcrazy/fpack.svg?branch=master&kill_cached=1)](https://travis-ci.com/frankurcrazy/fpack)
-[![Coverage Status](https://coveralls.io/repos/github/frankurcrazy/fpack/badge.svg?branch=master&kill_cache=1)](https://coveralls.io/github/frankurcrazy/fpack?branch=master)
+[![PyPI version](https://badge.fury.io/py/fpack.svg?kill_cache=2)](https://badge.fury.io/py/fpack)
+[![Build Status](https://travis-ci.com/frankurcrazy/fpack.svg?branch=master&kill_cached=2)](https://travis-ci.com/frankurcrazy/fpack)
+[![Coverage Status](https://coveralls.io/repos/github/frankurcrazy/fpack/badge.svg?branch=master&kill_cache=2)](https://coveralls.io/github/frankurcrazy/fpack?branch=master)
 
 ***fpack*** is a simple message (de)serializer created for fun and educational purpose.
 fpack hasn't been widely deployed, so use it at your own risk.
