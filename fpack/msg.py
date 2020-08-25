@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from io import BytesIO
+from collections import OrderedDict
 
 
 class Message:
@@ -14,28 +15,27 @@ class Message:
 
     def __init__(self, *_, **kwargs):
         # Initialize fields
-        self._fields = [field() for field in self.Fields]
-        self._field_names = [field.__name__ for field in self.Fields]
-
-        for k in kwargs:
-            if k in self._field_names:
-                self.__setattr__(k, kwargs[k])
+        self._fields = OrderedDict()
+        for field in self.Fields:
+            self._fields[field.__name__] = field()
+        for key in kwargs:
+            self.__setattr__(key, kwargs[key])
 
     def pack(self) -> bytes:
         payload = BytesIO()
 
-        for field in self._fields:
-            payload.write(field.pack())
+        for k, v in self._fields.items():
+            payload.write(v.pack())
 
         return payload.getvalue()
 
     def unpack(self, data):
-        self._fields = []
+        self._fields = {}
 
         offset = 0
         for field in self.Fields:
             decoded_field, processed = field.from_bytes(data[offset:])
-            self._fields.append(decoded_field)
+            self._fields[field.__name__] = decoded_field
             offset += processed
 
         return offset
@@ -48,31 +48,30 @@ class Message:
 
     def __repr__(self):
         fields_str = " ".join(
-            f"{field.__class__.__name__}={str(field)}" for field in self._fields
+            f"{k}={str(v)}" for k, v in self._fields
         )
         return f"<{self.__class__.__name__} {fields_str}>"
 
     def __getattr__(self, attr):
         try:
-            idx = self._field_names.index(attr)
+            field = self._fields[attr]
 
-            if isinstance(self._fields[idx], Message):
-                return self._fields[idx]
+            if isinstance(field, Message):
+                return field
 
-            return self._fields[idx].val
+            return field.val
 
-        except ValueError:
+        except KeyError:
             return None
 
     def __setattr__(self, attr, val):
-        if attr in ["_field_names", "_fields"]:
+        if attr == "_fields":
             object.__setattr__(self, attr, val)
             return
 
-        try:
-            idx = self._field_names.index(attr)
-            self._fields[idx].val = val
-        except ValueError:
+        if attr in self._fields:
+            self._fields[attr].val = val
+        else:
             object.__setattr__(self, attr, val)
 
     @property
