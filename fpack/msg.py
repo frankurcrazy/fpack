@@ -27,6 +27,13 @@ class Message:
             self._fields[field.__name__] = obj
 
     def pack(self) -> bytes:
+        """ Pack the message
+
+            Pack the message into bytes
+
+            Returns:
+                raw (bytes): Packed data in bytes
+        """
         payload = BytesIO()
 
         for v in self._fields.values():
@@ -35,6 +42,17 @@ class Message:
         return payload.getvalue()
 
     def unpack(self, data):
+        """ Unpack the message
+
+            Arguments:
+                data (bytes): bytes to unpack
+
+            Returns:
+                processed (int): number of bytes processed
+
+            Raises:
+                ValueError: the given data is incomplete
+        """
         data = memoryview(data)
 
         offset = 0
@@ -46,6 +64,18 @@ class Message:
 
     @classmethod
     def from_bytes(cls, data):
+        """ Unpack data and return message instance and the number of processed bytes
+
+            Arguments:
+                data (bytes): bytes to unpack
+
+            Returns:
+                tuple(Message, int): the message instance and the number of processed bytes
+
+            Raises:
+                ValueError: the given data is incomplete
+        """
+
         obj = cls()
         length = obj.unpack(data)
         return (obj, length)
@@ -75,6 +105,8 @@ class Message:
 
     @property
     def size(self):
+        """ The raw (bytes) size of the messages
+        """
         return sum([field.size for field in self._fields.values()])
 
 
