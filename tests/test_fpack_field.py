@@ -232,7 +232,7 @@ class TestPrimitiveFieldUnpack(unittest.TestCase):
         f = Uint8()
 
         with self.assertRaises(ValueError):
-            p = f.unpack(s.pack(val)[:0])
+            f.unpack(s.pack(val)[:0])
 
     def test_uint16_unpack_undersize(self):
         s = struct.Struct("!H")
@@ -240,7 +240,7 @@ class TestPrimitiveFieldUnpack(unittest.TestCase):
         f = Uint16()
 
         with self.assertRaises(ValueError):
-            p = f.unpack(s.pack(val)[:0])
+            f.unpack(s.pack(val)[:0])
 
     def test_uint32_unpack_undersize(self):
         s = struct.Struct("!I")
@@ -248,7 +248,7 @@ class TestPrimitiveFieldUnpack(unittest.TestCase):
         f = Uint32()
 
         with self.assertRaises(ValueError):
-            p = f.unpack(s.pack(val)[:0])
+            f.unpack(s.pack(val)[:0])
 
     def test_uint64_unpack_undersize(self):
         s = struct.Struct("!Q")
@@ -256,7 +256,7 @@ class TestPrimitiveFieldUnpack(unittest.TestCase):
         f = Uint64()
 
         with self.assertRaises(ValueError):
-            p = f.unpack(s.pack(val)[:0])
+            f.unpack(s.pack(val)[:0])
 
     def test_int8_unpack_undersize(self):
         s = struct.Struct("b")
@@ -264,7 +264,7 @@ class TestPrimitiveFieldUnpack(unittest.TestCase):
         f = Int8()
 
         with self.assertRaises(ValueError):
-            p = f.unpack(s.pack(val)[:0])
+            f.unpack(s.pack(val)[:0])
 
     def test_int16_unpack_undersize(self):
         s = struct.Struct("!h")
@@ -272,7 +272,7 @@ class TestPrimitiveFieldUnpack(unittest.TestCase):
         f = Int16()
 
         with self.assertRaises(ValueError):
-            p = f.unpack(s.pack(val)[:1])
+            f.unpack(s.pack(val)[:1])
 
     def test_int32_unpack_undersize(self):
         s = struct.Struct("!i")
@@ -280,7 +280,7 @@ class TestPrimitiveFieldUnpack(unittest.TestCase):
         f = Int32()
 
         with self.assertRaises(ValueError):
-            p = f.unpack(s.pack(val)[:3])
+            f.unpack(s.pack(val)[:3])
 
     def test_int64_unpack_undersize(self):
         s = struct.Struct("!q")
@@ -288,7 +288,7 @@ class TestPrimitiveFieldUnpack(unittest.TestCase):
         f = Int64()
 
         with self.assertRaises(ValueError):
-            p = f.unpack(s.pack(val)[:5])
+            f.unpack(s.pack(val)[:5])
 
 
 class TestStringField(unittest.TestCase):
