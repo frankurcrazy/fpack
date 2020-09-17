@@ -1,7 +1,24 @@
 # See https://pre-commit.com for more information
 # See https://pre-commit.com/hooks.html for more hooks
 repos:
--   repo: https://github.com/pre-commit/pre-commit-hooks
+  - repo: https://github.com/psf/black
+    rev: 19.10b0
+    hooks:
+      - id: black
+
+  - repo: https://gitlab.com/pycqa/flake8
+    rev: 3.8.3
+    hooks:
+      - id: flake8
+
+  - repo: https://github.com/timothycrosley/isort
+    rev: 5.4.2
+    hooks:
+      - id: isort
+        additional_dependencies: [toml]
+        exclude: ^.*/?setup\.py$
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v3.2.0
     hooks:
     -   id: trailing-whitespace
@@ -9,7 +26,12 @@ repos:
     -   id: check-yaml
     -   id: check-added-large-files
 
--   repo: local
+#  - repo: https://github.com/jumanjihouse/pre-commit-hooks
+#    rev: master  # or specific git tag
+#    hooks:
+#      - id: markdownlint # Configure in .mdlrc
+
+  - repo: local
     hooks:
     -   id: unittest
         name: unittest
