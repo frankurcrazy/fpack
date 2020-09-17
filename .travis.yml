@@ -8,14 +8,19 @@ before_install:
 - pip install coverage
 - pip install coveralls
 install:
-- python setup.py install
+- pip install .
 script:
 - coverage run --source=fpack -m unittest  discover tests
 - python -m coveralls
+before_deploy:
+- pip install --upgrade pep517
+- python -m pep517.build --source --binary --out-dir dist .
+- echo > setup.py
 deploy:
   provider: pypi
   distributions: "sdist bdist_wheel"
   skip_existing: true
+  skip_cleanup: true
   on:
     tags: true
   username: "__token__"
