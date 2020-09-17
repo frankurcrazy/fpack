@@ -8,37 +8,45 @@
 fpack hasn't been widely deployed, so use it at your own risk.
 
 ## Requirements
- - python >= 3.7
+
+- python >= 3.7
 
 ## Installation
+
 ### Install with pip
+
 ```bash
 pip install fpack
 ```
 
 ### Download latest version from git
+
 ```bash
 git clone https://github.com/frankurcrazy/fpack
 cd fpack && python setup.py install
 ```
 
 ## Guide
+
 The following shows an example that uses fpack to declare and pack/unpack a message.
 
 ### Primitive types
+
 ***fpack*** supports primitive types:
- - Uint8
- - Uint16
- - Uint32
- - Uint64
- - Int8
- - Int16
- - Int32
- - Int64
- - Bytes
- - String
+
+- Uint8
+- Uint16
+- Uint32
+- Uint64
+- Int8
+- Int16
+- Int32
+- Int64
+- Bytes
+- String
 
 ### Message declaration
+
 ```python
 import fpack
 
@@ -51,6 +59,7 @@ class Hello(fpack.Message):
 ```
 
 ### Message serialization
+
 ```python
 >>> helloMsg = Hello()
 >>> helloMsg.MsgID = 100
@@ -62,16 +71,21 @@ b'd\x00\x0bHelloworld!'
 ```
 
 ### Message deserialization
-Message deserialization can be done by calling class method `from_bytes`, or by calling instance method `unpack`
+
+Message deserialization can be done by calling class method `from_bytes`,
+or by calling instance method `unpack`
 
 Decode with class method `from_bytes`:
+
 ```python
->>> decodedMsg, decodedLength = Hello.from_bytes(b'd\x00\x0bHelloworld!')   # using the byte-stream from previous example
+# using the byte-stream from previous example
+>>> decodedMsg, decodedLength = Hello.from_bytes(b'd\x00\x0bHelloworld!')
 >>> decodedMsg
 <Hello MsgID=100 Greetings=Helloworld!>
 ```
 
 Decode with instance method `unpack`:
+
 ```python
 >>> decodedMsg = Hello()
 >>> decodedMsg.unpack(b'd\x00\x0bHelloworld!')
@@ -81,9 +95,11 @@ Decode with instance method `unpack`:
 ```
 
 ### Nested message (from 0.0.5 and beyond)
+
 Nested message is supported.
 
 Declaring an nested message:
+
 ```python
 import fpack
 
@@ -121,6 +137,7 @@ b'\x00\x0ethis is a mail\x00\x08John Doe\x00\x08Jane Doe\x00\tmail body\x00\x0bb
 ```
 
 ### Array (from 1.0.0 and beyond)
+
 Array field is supported and can be created via ```array_field_factory(name, type)```.
 
 ```python
@@ -151,4 +168,5 @@ b'\x01\x00\x03\x00\x06Camera\x00\x00\x00\n\x00\x08Computer\x00\x00\x00\x0c\x00\x
 ```
 
 ## License
+
 BSD
